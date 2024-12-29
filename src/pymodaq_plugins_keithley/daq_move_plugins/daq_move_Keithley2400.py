@@ -244,8 +244,7 @@ class DAQ_Move_Keithley2400(DAQ_Move_base):
             --------
             daq_utils.ThreadCommand
         """
-
-        self.move_Abs(0)
+        self.move_abs(0)
 
     def stop(self):
         """
