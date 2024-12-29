@@ -1,9 +1,9 @@
 from easydict import EasyDict as edict
 from pymeasure.instruments.keithley import Keithley2400
 from pymeasure.adapters import VISAAdapter, PrologixAdapter
-
+from typing import Union, List, Dict
 from pymodaq.control_modules.move_utility_classes import DAQ_Move_base  # base class
-from pymodaq.control_modules.move_utility_classes import comon_parameters, main  # common set of parameters for all actuators
+from pymodaq.control_modules.move_utility_classes import comon_parameters, main, DataActuatorType, DataActuator  # common set of parameters for all actuators
 from pymodaq.utils.daq_utils import ThreadCommand, getLineInfo
 from pymodaq.utils.logger import set_logger, get_module_name  # object used to send info back to the main thread
 from pymodaq.utils.parameter.utils import iter_children
@@ -30,10 +30,11 @@ class DAQ_Move_Keithley2400(DAQ_Move_base):
         *params*          dictionnary
         =============== ==============
     """
-    _controller_units = 'A'
-    is_multiaxes = False  # set to True if this plugin is controlled for a multiaxis controller (with a unique communication link)
-    stage_names = []  # "list of strings of the multiaxes
-    _epsilon = 1e-5
+    _controller_units: Union[str, List[str]] = 'A'
+    _axis_names: Union[List[str], Dict[str, int]] = []
+    is_multiaxes = False 
+    _epsilon: Union[float, List[float]] = 1e-5
+    data_actuator_type = DataActuatorType.DataActuator
 
     params = [   {'title': 'Adapter:', 'name': 'adapter', 'type': 'list', 'limits': list(ADAPTERS.keys())},
                  {'title': 'VISA Ressources:', 'name': 'visa_ressource', 'type': 'list', 'limits': VISA_RESSOURCES},
