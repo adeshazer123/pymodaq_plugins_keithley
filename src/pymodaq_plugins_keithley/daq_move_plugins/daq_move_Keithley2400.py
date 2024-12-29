@@ -254,7 +254,8 @@ class DAQ_Move_Keithley2400(DAQ_Move_base):
         --------
         move_done
         """
-        self.move_done()  # to let the interface know the actuator stopped
+        self.controller.move_done()
+        # self.move_done()  # to let the interface know the actuator stopped
 
 
 if __name__ == '__main__':
