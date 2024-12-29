@@ -56,9 +56,9 @@ class DAQ_Move_Keithley2400(DAQ_Move_base):
                       'default': False},
                      {'title': 'Status:', 'name': 'multi_status', 'type': 'list', 'value': 'Master',
                       'limits': ['Master', 'Slave']},
-                     {'title': 'Axis:', 'name': 'axis', 'type': 'list', 'limits': stage_names},
+                     {'title': 'Axis:', 'name': 'axis', 'type': 'list', 'limits': _axis_names},
 
-                 ]}] + comon_parameters
+                 ]}] + comon_parameters(is_multiaxes, axis_names = _axis_names, epsilon = _epsilon)
 
     def __init__(self, parent=None, params_state=None):
         """
@@ -211,7 +211,7 @@ class DAQ_Move_Keithley2400(DAQ_Move_base):
             self.status.initialized = False
             return self.status
 
-    def move_Abs(self, position):
+    def move_abs(self, position):
         """ Move the actuator to the absolute target defined by position
 
         Parameters
@@ -238,7 +238,7 @@ class DAQ_Move_Keithley2400(DAQ_Move_base):
         self.target_position = position
         self.current_position = self.target_position #bypass checking
 
-    def move_Rel(self, position):
+    def move_rel(self, position):
         """ Move the actuator to the relative target actuator value defined by position
 
         Parameters
@@ -250,7 +250,7 @@ class DAQ_Move_Keithley2400(DAQ_Move_base):
         self.move_Abs(self.target_position)
         ##############################
 
-    def move_Home(self):
+    def move_home(self):
         """
           Send the update status thread command.
             See Also
@@ -260,7 +260,7 @@ class DAQ_Move_Keithley2400(DAQ_Move_base):
 
         self.move_Abs(0)
 
-    def stop_motion(self):
+    def stop(self):
         """
         Call the specific move_done function (depending on the hardware).
 
