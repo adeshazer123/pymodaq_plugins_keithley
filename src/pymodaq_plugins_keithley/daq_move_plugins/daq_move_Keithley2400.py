@@ -205,6 +205,7 @@ class DAQ_Move_Keithley2400(DAQ_Move_base):
         """
 
         position = self.check_bound(position)  #if user checked bounds, the defined bounds are applied here
+        self.target_value = position
         position = self.set_position_with_scaling(position)  # apply scaling if the user specified one
         if self.settings.child('source_mode').value() == 'Current':
             self.controller.source_current = position
