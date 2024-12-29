@@ -176,34 +176,19 @@ class DAQ_Move_Keithley2400(DAQ_Move_base):
             *initialized: (bool): False if initialization failed otherwise True
         """
         try:
-            # initialize the stage and its controller status
-            # controller is an object that may be passed to other instances of DAQ_Move_Mock in case
-            # of one controller controlling multiactuators (or detector)
-
             self.status.update(edict(info="", controller=None, initialized=False))
+            self.ini_stage_init(slave_controller = controller) 
 
-            # check whether this stage is controlled by a multiaxe controller (to be defined for each plugin)
-            # if multiaxes then init the controller here if Master state otherwise use external controller
-            if self.settings.child('multiaxes', 'ismultiaxes').value() and self.settings.child('multiaxes',
-                                   'multi_status').value() == "Slave":
-                if controller is None:
-                    raise Exception('no controller has been defined externally while this axe is a slave one')
-                else:
-                    self.controller = controller
-            else:  # Master stage
-
-                adapter = \
-                    ADAPTERS[self.settings.child('adapter').value()](self.settings.child('visa_ressource').value())
-                self.controller = Keithley2400(adapter)  # when writing your own plugin replace this line
+            if self.is_master: 
+                adapter = ADAPTERS[self.settings.child('adapter').value()](self.settings.child('visa_ressource').value())
+                self.controller = Keithley2400(adapter)
                 self.commit_settings(self.settings.child('source_mode'))
-
-                #####################################
 
             self.status.info = self.controller.id
             self.settings.child('info').setValue(self.status.info)
             self.status.controller = self.controller
             self.status.initialized = True
-            return self.status
+            return self.status.info, self.status.initialized
 
         except Exception as e:
             self.emit_status(ThreadCommand('Update_Status', [getLineInfo() + str(e), 'log']))
